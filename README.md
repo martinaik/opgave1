@@ -19,6 +19,7 @@ Programmet køres ved at læse en CSV-fil ind som en tekststreng og give den som
 ...
 
 ## UML-diagram
+```
 +---------------------+
 |      CSV tekst      |
 +---------------------+
@@ -58,7 +59,7 @@ Programmet køres ved at læse en CSV-fil ind som en tekststreng og give den som
 |  med data.frame og  |
 |     JSON output     |
 +---------------------+
-
+```
 
 
 
