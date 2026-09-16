@@ -21,12 +21,12 @@ parse_csv <- function(csv_file) {
   list(data = data, data_JSON = data_JSON)
 }
 
-# Parse CSV employees.ascii.csv
+# Parse employees.ascii.csv
 employees_data <- parse_csv("employees.ascii.csv")
 employees_data_frame <- employees_data$data
 employees_JSON <- employees_data$data_JSON
 
-# Parse CSV sogne.dawa.csv
+# Parse sogne.dawa.csv
 sogne_data <- parse_csv("sogne.dawa.csv")
 sogne_data_frame <- sogne_data$data
 sogne_JSON <- sogne_data$data_JSON
