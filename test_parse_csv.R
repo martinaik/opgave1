@@ -61,6 +61,7 @@ Anna,anna@example.com"
   
   expect_equal(nrow(result$data), 1)
   expect_equal(result$data$name[1], "Anna")
+  expect_equal(result$data$email[1], "anna@example.com")
 })
 
 # Test that empty fields are preserved during parsing.
@@ -88,6 +89,7 @@ Marcus Chen,San Francisco"
   
   result <- parse_csv("spaces.csv")
   
+  expect_equal(result$data$name[1], "Marcus Chen")
   expect_equal(result$data$office[1], "San Francisco")
 })
 
@@ -108,7 +110,7 @@ Anna,"San Francisco, CA"'
 test_that("Error if a row has too many fields", {
   
   csv_text <- "name,email
-Anna,anna@example.com,Extra"
+Anna,anna@example.com,extra"
   
   writeLines(csv_text, "too_many.csv")
   
@@ -127,7 +129,7 @@ Anna,anna@example.com"
 })
 
 # Test that Danish characters are preserved during parsing
-test_that("Preserve Danish characters", {
+test_that("Preserves Danish characters", {
   
   csv_text <- "navn
 Helligånds"
@@ -140,7 +142,7 @@ Helligånds"
 })
 
 # Test that a CSV file with a blank last line is parsed correctly.
-test_that("Ignore blank last line", {
+test_that("Ignores blank last line", {
   
   csv_text <- "name,email
 Anna,anna@example.com
