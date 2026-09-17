@@ -1,7 +1,5 @@
 library(jsonlite)
 
-setwd("C:/Users/MartinaImmerkærKrist/OneDrive - Specialisterne/Opgave 1/opgave1")
-
 # Parse CSV file into data frame and JSON
 parse_csv <- function(csv_file) {
   
