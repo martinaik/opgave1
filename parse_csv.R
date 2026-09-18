@@ -1,21 +1,24 @@
-library(jsonlite)
+# Opgave 1 - Parser opgave
 
-# Parse CSV file into data frame and JSON
-parse_csv <- function(csv_file) {
+# Function to parse CSV file into data frame and JSON format
+parse_csv <- function(csv_file){
   
-  csv_text <- paste(readLines(csv_file), collapse = "\n")
+  # Read the file as one text string
+  csv_text <- paste(readLines(csv_file), collapse = "\n") 
   
-  lines <- strsplit(csv_text, "\n")[[1]]
+  # Split the text into lines
+  lines <- strsplit(csv_text, "\n")[[1]] 
   
-  headers <- parse_row(lines[1])
+  # Extract the header row as column names
+  headers <- parse_row(lines[1]) 
   
-  rows <- lapply(lines[-1], parse_row)
-  
+  # Split each line into rows
+  rows <- lapply(lines[-1], parse_row) 
+
   # Check that every row has the same number of fields as the header
   expected_fields <- length(headers)
-  
-  for (i in seq_along(rows)) {
-    if (length(rows[[i]]) != expected_fields) {
+  for (i in seq_along(rows)){
+    if (length(rows[[i]]) != expected_fields){
       stop(paste(
         "Invalid CSV format: row", i + 1,
         "contains", length(rows[[i]]),
@@ -25,58 +28,50 @@ parse_csv <- function(csv_file) {
   }
   
   # Handle file containing only a header
-  if (length(rows) == 0) {
-    data <- as.data.frame(matrix(nrow = 0, ncol = length(headers)))
-    colnames(data) <- headers
-  } else {
-    data <- as.data.frame(do.call(rbind, rows), stringsAsFactors = FALSE)
-    colnames(data) <- headers
+  if (length(rows) == 0){
+    dataframe <- as.data.frame(matrix(nrow = 0, ncol = length(headers))) # Create data frame with zero rows
+    colnames(dataframe) <- headers
+  } else{
+    dataframe <- as.data.frame(do.call(rbind, rows), stringsAsFactors = FALSE) # Combine the rows into a data frame
+    colnames(dataframe) <- headers
   }
   
   # Convert to JSON format
-  data_JSON <- toJSON(data, dataframe = "rows", pretty = TRUE)
+  data_JSON <- data_to_json(dataframe)
   
   # Return results
-  list(data = data, data_JSON = data_JSON)
+  list(dataframe = dataframe, data_JSON = data_JSON)
 }
 
 # Function to parse one row
-parse_row <- function(line) {
+parse_row <- function(line){
   
-  fields <- c()
-  field <- ""
-  inside_quotes <- FALSE
+  fields <- c() # All fields from the row
+  field <- ""   # Current field
+  inside_quotes <- FALSE # Track whether the parser is inside quotation marks
   
-  chars <- strsplit(line, "")[[1]]
+  # Split the row into individual characters
+  chars <- strsplit(line, "")[[1]] 
   
   i <- 1
-  while (i <= length(chars)) {
+  while (i <= length(chars)){
     
     char <- chars[i]
     
-    if (char == '"') {
-      
+    if (char == '"'){
       # Handle escaped quotation marks ("")
-      if (inside_quotes &&
-          i < length(chars) &&
-          chars[i + 1] == '"') {
-        
+      if (inside_quotes && i < length(chars) && chars[i + 1] == '"'){
         field <- paste0(field, '"')
         i <- i + 1
-        
-      } else {
+      } else{
         # Enter or leave quoted field
         inside_quotes <- !inside_quotes
       }
-      
-    } else if (char == "," && !inside_quotes) {
-      
+    } else if (char == "," && !inside_quotes){
       # Comma outside quotes ends a field
       fields <- c(fields, field)
       field <- ""
-      
-    } else {
-      
+    } else{
       # Add character to current field
       field <- paste0(field, char)
     }
@@ -87,5 +82,43 @@ parse_row <- function(line) {
   # Add the last field
   fields <- c(fields, field)
   
+  # Return the parsed fields
   fields
+}
+
+# Function to convert data frame to JSON format
+data_to_json <- function(data){
+  
+  json_rows <- c()
+  
+  for (i in 1:nrow(data)){
+    
+    fields <- c() # Fields of the current row
+    
+    # Create one JSON field
+    for (j in 1:ncol(data)){
+      field <- paste0(
+        '    "', names(data)[j], '": "', data[i, j], '"'
+      )
+      fields <- c(fields, field)
+    }
+    
+    # Combine the fields into one JSON object
+    row_json <- paste0(
+      " {\n",
+      paste(fields, collapse = ",\n"),
+      "\n  }"
+    )
+    json_rows <- c(json_rows, row_json)
+  }
+  
+  # Combine all JSON objects into one JSON array
+  json_text <- paste0(
+    "[\n",
+    paste(json_rows, collapse = ",\n"),
+    "\n]"
+  )
+  
+  # Return the JSON text
+  json_text
 }

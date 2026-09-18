@@ -1,5 +1,6 @@
+# Test the CSV parser
+
 library(testthat)
-library(jsonlite)
 
 source("parse_csv.R")
 
@@ -14,9 +15,9 @@ Peter,peter@example.com"
   
   result <- parse_csv("test.csv")
   
-  expect_equal(nrow(result$data), 2)
-  expect_equal(ncol(result$data), 2)
-  expect_equal(names(result$data), c("name", "email"))
+  expect_equal(nrow(result$dataframe), 2)
+  expect_equal(ncol(result$dataframe), 2)
+  expect_equal(names(result$dataframe), c("name", "email"))
 })
 
 # Test that the provided employees.ascii.csv file is parsed correctly.
@@ -24,8 +25,8 @@ test_that("Parses employees.ascii.csv correctly", {
   
   result <- parse_csv("employees.ascii.csv")
   
-  expect_equal(nrow(result$data), 30)
-  expect_equal(ncol(result$data), 7)
+  expect_equal(nrow(result$dataframe), 30)
+  expect_equal(ncol(result$dataframe), 7)
 })
 
 # Test that the provided sogne.dawa.csv file is parsed correctly.
@@ -33,8 +34,8 @@ test_that("Parses sogne.dawa.csv correctly", {
   
   result <- parse_csv("sogne.dawa.csv")
   
-  expect_equal(nrow(result$data), 2097)
-  expect_equal(ncol(result$data), 12)
+  expect_equal(nrow(result$dataframe), 2097)
+  expect_equal(ncol(result$dataframe), 12)
 })
 
 # Test a CSV file that contains only a header row and no data rows.
@@ -45,8 +46,8 @@ test_that("Parses a CSV file with only a header", {
   
   result <- parse_csv("header_only.csv")
   
-  expect_equal(nrow(result$data), 0)
-  expect_equal(ncol(result$data), 3)
+  expect_equal(nrow(result$dataframe), 0)
+  expect_equal(ncol(result$dataframe), 3)
 })
 
 # Test a CSV file with only one data row.
@@ -59,9 +60,9 @@ Anna,anna@example.com"
   
   result <- parse_csv("one_row.csv")
   
-  expect_equal(nrow(result$data), 1)
-  expect_equal(result$data$name[1], "Anna")
-  expect_equal(result$data$email[1], "anna@example.com")
+  expect_equal(nrow(result$dataframe), 1)
+  expect_equal(result$dataframe$name[1], "Anna")
+  expect_equal(result$dataframe$email[1], "anna@example.com")
 })
 
 # Test that empty fields are preserved during parsing.
@@ -75,8 +76,8 @@ Peter,peter@example.com"
   
   result <- parse_csv("missing.csv")
   
-  expect_equal(result$data$email[1], "")
-  expect_equal(result$data$email[2], "peter@example.com")
+  expect_equal(result$dataframe$email[1], "")
+  expect_equal(result$dataframe$email[2], "peter@example.com")
 })
 
 # Test that spaces inside fields are preserved.
@@ -89,8 +90,8 @@ Marcus Chen,San Francisco"
   
   result <- parse_csv("spaces.csv")
   
-  expect_equal(result$data$name[1], "Marcus Chen")
-  expect_equal(result$data$office[1], "San Francisco")
+  expect_equal(result$dataframe$name[1], "Marcus Chen")
+  expect_equal(result$dataframe$office[1], "San Francisco")
 })
 
 # Test that a comma inside a quoted field is treated as part of the field
@@ -103,7 +104,7 @@ Anna,"San Francisco, CA"'
   
   result <- parse_csv("quoted.csv")
   
-  expect_equal(result$data$office[1], "San Francisco, CA")
+  expect_equal(result$dataframe$office[1], "San Francisco, CA")
 })
 
 # Test that the parser returns an error when a row has too many fields.
@@ -138,7 +139,7 @@ Helligånds"
   
   result <- parse_csv("danish.csv")
   
-  expect_equal(result$data$navn[1], "Helligånds")
+  expect_equal(result$dataframe$navn[1], "Helligånds")
 })
 
 # Test that a CSV file with a blank last line is parsed correctly.
@@ -152,7 +153,7 @@ Anna,anna@example.com
   
   result <- parse_csv("blank_line.csv")
   
-  expect_equal(nrow(result$data), 1)
+  expect_equal(nrow(result$dataframe), 1)
 })
 
 # Test that an empty CSV file returns an error.
@@ -173,7 +174,7 @@ Anna,"He said ""Hello"""'
   
   result <- parse_csv("quotes.csv")
   
-  expect_equal(result$data$comment[1], 'He said "Hello"')
+  expect_equal(result$dataframe$comment[1], 'He said "Hello"')
 })
 
 # Test that the parser also returns a valid JSON representation.
