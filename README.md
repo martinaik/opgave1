@@ -85,20 +85,20 @@ Programmet fungerer i følgende trin:
               |
               v
 +---------------------------+
-|   Opret ´data.frame´        |
-|   og tildel kolonnenavne  |
+|  Opret data.frame         |
+|  og tildel kolonnenavne   |
 +---------------------------+
               |
               v
 +---------------------------+
-|  Konverter `data.frame`     |
+|  Konverter data.frame     |
 |  til JSON-repræsentation  |
 +---------------------------+
               |
               v
 +---------------------------+
 | Returnér en liste med     |
-| `data.frame´ og JSON-output |
+| data.frame og JSON-output |
 +---------------------------+
 ```
 
