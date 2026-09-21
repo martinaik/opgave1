@@ -19,15 +19,21 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - `sogne.dawa.csv`,
 - fil med kun en header,
 - fil med kun en datarække,
+- fil med kun en kolonne,
+- filer med for mange eller for få felter,
 - tomme felter,
 - mellemrum i felter
-- filer med for mange eller for få felter,
 - komma i qouted felter,
+- komma og citationstegn i samme felt,
 - escaped citationstegn,
+- tomt qouted felt,
 - danske tegn,
-- tom fil,
+- specialtegn,
+- numeriske værdier,
 - tom sidste linje,
-- JSON-output
+- tom linje midt i filen,
+- tom fil,
+- JSON-output.
 
 ### Kør programmet
 Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på en CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Programmet parser derefter filen til et data frame og omdanner dette data frame til JSON-repræsentation. Programmet returnerer til sidst en liste, som indeholder både data framet og JSON-outputtet.
