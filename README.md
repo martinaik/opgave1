@@ -34,6 +34,7 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - tom sidste linje,
 - tom linje midt i filen,
 - tom fil,
+- filer med og uden header,
 - JSON-repræsentation.
 
 ### Kør programmet
