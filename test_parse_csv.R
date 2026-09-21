@@ -283,6 +283,37 @@ test_that("Returns an error for an empty CSV file", {
   expect_error(parse_csv("empty.csv"))
 })
 
+# Test that a CSV file with a header is parsed correctly.
+test_that("Parses a CSV file with a header", {
+  
+  csv_text <- "name,email
+Marcus,marcus.chen@example.com
+Priya,sharma@example.com"
+  
+  writeLines(csv_text, "header.csv")
+  
+  result <- parse_csv("header.csv", has_header = TRUE)
+  
+  expect_equal(names(result$dataframe), c("name", "email"))
+  expect_equal(nrow(result$dataframe), 2)
+})
+
+# Test that a CSV file without a header is parsed correctly.
+test_that("Parses a CSV file without a header", {
+  
+  csv_text <- "Marcus,marcus.chen@example.com
+Priya,priya.sharma@example.com"
+  
+  writeLines(csv_text, "no_header.csv")
+  
+  result <- parse_csv("no_header.csv", has_header = FALSE)
+  
+  expect_equal(names(result$dataframe), c("V1", "V2"))
+  expect_equal(result$dataframe$V1[1], "Marcus")
+  expect_equal(result$dataframe$V2[2], "priya.sharma@example.com")
+  expect_equal(nrow(result$dataframe), 2)
+})
+
 # Test that the parser returns a valid JSON representation.
 test_that("JSON output is being created", {
   
@@ -309,4 +340,19 @@ Anna,anna@example.com"
   
   expect_true(grepl('"name"', result$data_JSON))
   expect_true(grepl('"email"', result$data_JSON))
+})
+
+# Test that the JSON output contains all rows.
+test_that("JSON contains all rows", {
+  
+  csv_text <- "name,email
+Marcus,marcus.chen@example.com
+Priya,priya.sharma@example.com"
+  
+  writeLines(csv_text, "json_rows.csv")
+  
+  result <- parse_csv("json_rows.csv")
+  
+  expect_true(grepl("Marcus", result$data_JSON))
+  expect_true(grepl("Priya", result$data_JSON))
 })
