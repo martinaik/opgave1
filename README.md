@@ -30,7 +30,7 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - JSON-output
 
 ### Kør programmet
-Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på en CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Programmet parser derefter filen til et data frame og omdanner dette data frame til JSON-format. Programmet returnerer til sidst en liste, som indeholder både data framet og JSON-outputtet.
+Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på en CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Programmet parser derefter filen til et data frame og omdanner dette data frame til JSON-repræsentation. Programmet returnerer til sidst en liste, som indeholder både data framet og JSON-outputtet.
 
 ## Beskrivelse af den implementerede softwarearkitektur
 Programmet er opdelt i tre funktioner. 
@@ -46,8 +46,8 @@ Programmet fungerer i følgende trin:
 3. Den første linje bruges som kolonnenavne.
 4. De resterende linjer opdeles i rækker og samles i et `data.frame`.
 5. Data framet sendes til funktionen `data_to_json()`.
-6. Hver række og kolonne gennemgås og der opbygges en JSON-streng.
-7. Programmet returnerer en liste med både `data.frame` og JSON-repræsentationen.
+6. Hver række og kolonne gennemgås, og der opbygges en JSON-streng.
+7. Programmet returnerer en liste med både `data.frame` og JSON-output.
 
 ## UML-diagram
 ```
