@@ -41,7 +41,7 @@ Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parsere
 
 ## Beskrivelse af den implementerede softwarearkitektur
 Programmet er opdelt i tre funktioner. 
-`parse_csv()` styrer hele parserprocessen. Funktionen læser CSV-filen som tekst, opdeler teksten i linjer, parser kolonnenavne og datarækker, kontrollerer at alle rækker har det korrekte antal felter, opretter et `data.frame` og konverterer resultatet til JSON-repræsentation.
+`parse_csv()` styrer hele parserprocessen. Funktionen læser CSV-filen som tekst, opdeler teksten i linjer, parser kolonnenavne og datarækker, kontrollerer at alle rækker har det korrekte antal felter, opretter et `data.frame` og konverterer resultatet til JSON-repræsentation. Funktionen har også argumentet `has_header`, hvor brugeren kan angive `TRUE` eller `FALSE` afhængigt af, om CSV-filen indeholder en header. Som standard antager funktionen, at CSV-filen indeholder en header. Hvis `has_header = TRUE`, bruges den første række som kolonnenavne. Hvis `has_header = FALSE`, oprettes der kolonnenavne (V1, V2, ...), og alle rækker behandles som data.
 
 `parse_row()` parser en CSV-række ad gangen. Funktionen gennemgår rækken tegn for tegn og håndterer kommaer uden for citationstegn, qouted felter og escaped citationstegn.
 
