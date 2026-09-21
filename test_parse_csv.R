@@ -8,8 +8,8 @@ source("parse_csv.R")
 test_that("Parses a simple CSV correctly", {
   
   csv_text <- "name,email
-Anna,anna@example.com
-Peter,peter@example.com"
+Marcus,marcus.chen@example.com
+Priya,priya.sharma@example.com"
   
   writeLines(csv_text, "test.csv")
   
@@ -54,30 +54,82 @@ test_that("Parses a CSV file with only a header", {
 test_that("Parses a file with one data row", {
   
   csv_text <- "name,email
-Anna,anna@example.com"
+Marcus,marcus.chen@example.com"
   
   writeLines(csv_text, "one_row.csv")
   
   result <- parse_csv("one_row.csv")
   
   expect_equal(nrow(result$dataframe), 1)
-  expect_equal(result$dataframe$name[1], "Anna")
-  expect_equal(result$dataframe$email[1], "anna@example.com")
+  expect_equal(result$dataframe$name[1], "Marcus")
+  expect_equal(result$dataframe$email[1], "marcus.chen@example.com")
+})
+
+# Test a CSV file with only one column.
+test_that("Parses a file with one column", {
+  
+  csv_text <- "name
+Marcus
+Priya"
+  
+  writeLines(csv_text, "one_column.csv")
+  
+  result <- parse_csv("one_column.csv")
+  
+  expect_equal(ncol(result$dataframe), 1)
+  expect_equal(nrow(result$dataframe), 2)
+})
+
+# Test that the parser returns an error when a row has too many fields.
+test_that("Error if a row has too many fields", {
+  
+  csv_text <- "name,email
+Marcus,marcus.chen@example.com,extra"
+  
+  writeLines(csv_text, "too_many.csv")
+  
+  expect_error(parse_csv("too_many.csv"))
+})
+
+# Test that the parser returns an error when a row has too few fields
+test_that("Error if a row has too few fields", {
+  
+  csv_text <- "name,email,department
+Marcus,marcus.chen@example.com"
+  
+  writeLines(csv_text, "too_few.csv")
+  
+  expect_error(parse_csv("too_few.csv"))
 })
 
 # Test that empty fields are preserved during parsing.
 test_that("Parses empty fields", {
   
   csv_text <- "name,email
-Anna,
-Peter,peter@example.com"
+Marcus,
+Priya,priya.sharma@example.com"
   
   writeLines(csv_text, "missing.csv")
   
   result <- parse_csv("missing.csv")
   
   expect_equal(result$dataframe$email[1], "")
-  expect_equal(result$dataframe$email[2], "peter@example.com")
+  expect_equal(result$dataframe$email[2], "priya.sharma@example.com")
+})
+
+# Test that multiple empty fields are preserved during parsing.
+test_that("Parses multiple empty fields", {
+  
+  csv_text <- "name,email,office
+Marcus,,London
+Priya,priya.sharma@example.com,"
+  
+  writeLines(csv_text, "multiple_missing.csv")
+  
+  result <- parse_csv("multiple_missing.csv")
+  
+  expect_equal(result$dataframe$email[1], "")
+  expect_equal(result$dataframe$office[2], "")
 })
 
 # Test that spaces inside fields are preserved.
@@ -98,7 +150,7 @@ Marcus Chen,San Francisco"
 test_that("Parses comma in quoted field", {
   
   csv_text <- 'name,office
-Anna,"San Francisco, CA"'
+Marcus,"San Francisco, CA"'
   
   writeLines(csv_text, "quoted.csv")
   
@@ -107,26 +159,54 @@ Anna,"San Francisco, CA"'
   expect_equal(result$dataframe$office[1], "San Francisco, CA")
 })
 
-# Test that the parser returns an error when a row has too many fields.
-test_that("Error if a row has too many fields", {
+# Test that a field containing both commas and quotation marks is parsed correctly.
+test_that("Parses a field containing both commas and quotation marks", {
   
-  csv_text <- "name,email
-Anna,anna@example.com,extra"
+  csv_text <- 'name,comment
+Marcus,"He said ""Hello, Marcus"""'
   
-  writeLines(csv_text, "too_many.csv")
+  writeLines(csv_text, "complex_quotes.csv")
   
-  expect_error(parse_csv("too_many.csv"))
+  result <- parse_csv("complex_quotes.csv")
+  
+  expect_equal(result$dataframe$comment[1], 'He said "Hello, Marcus"')
 })
 
-# Test that the parser returns an error when a row has too few fields
-test_that("Error if a row has too few fields", {
+# Test that escaped quotation marks are parsed correctly.
+test_that("Parses escaped quotation mark", {
   
-  csv_text <- "name,email,department
-Anna,anna@example.com"
+  csv_text <- 'name,comment
+Marcus,"He said ""Hello"""'
   
-  writeLines(csv_text, "too_few.csv")
+  writeLines(csv_text, "quotes.csv")
   
-  expect_error(parse_csv("too_few.csv"))
+  result <- parse_csv("quotes.csv")
+  
+  expect_equal(result$dataframe$comment[1], 'He said "Hello"')
+})
+
+# Test that an unclosed quoted field returns an error.
+test_that("Returns an error for an unclosed quoted field", {
+  
+  csv_text <- 'name,comment
+Marcus,"Hello'
+  
+  writeLines(csv_text, "unclosed_quotes.csv")
+  
+  expect_error(parse_csv("unclosed_quotes.csv"))
+})
+
+# Test that an empty quoted field is parsed correctly.
+test_that("Parses empty quoted field", {
+  
+  csv_text <- 'name,email
+Marcus,""'
+  
+  writeLines(csv_text, "empty_quotes.csv")
+  
+  result <- parse_csv("empty_quotes.csv")
+  
+  expect_equal(result$dataframe$email[1], "")
 })
 
 # Test that Danish characters are preserved during parsing
@@ -142,11 +222,37 @@ Helligånds"
   expect_equal(result$dataframe$navn[1], "Helligånds")
 })
 
+# Test that special characters are preserved during parsing.
+test_that("Parses special characters", {
+  
+  csv_text <- "name,comment
+Marcus,Hello! #2026"
+  
+  writeLines(csv_text, "special.csv")
+  
+  result <- parse_csv("special.csv")
+  
+  expect_equal(result$dataframe$comment[1], "Hello! #2026")
+})
+
+# Test that numeric values are parsed as text.
+test_that("Parses numeric values as text", {
+  
+  csv_text <- "salary
+155000"
+  
+  writeLines(csv_text, "numbers.csv")
+  
+  result <- parse_csv("numbers.csv")
+  
+  expect_equal(result$dataframe$salary[1], "155000")
+})
+
 # Test that a CSV file with a blank last line is parsed correctly.
 test_that("Ignores blank last line", {
   
   csv_text <- "name,email
-Anna,anna@example.com
+Marcus,marcus.chen@example.com
 "
   
   writeLines(csv_text, "blank_line.csv")
@@ -156,38 +262,51 @@ Anna,anna@example.com
   expect_equal(nrow(result$dataframe), 1)
 })
 
+# Test an empty row in the middle of the file returns an error
+test_that("Returns an error for an empty row in the middle of the file", {
+  
+  csv_text <- "name,email
+Marcus,marcus.chen@example.com
+
+Priya,priya.sharma@example.com"
+  
+  writeLines(csv_text, "blank_middle.csv")
+  
+  expect_error(parse_csv("blank_middle.csv"))
+})
+
 # Test that an empty CSV file returns an error.
-test_that("Error with empty CSV file", {
+test_that("Returns an error for an empty CSV file", {
   
   writeLines("", "empty.csv")
   
   expect_error(parse_csv("empty.csv"))
 })
 
-# Test that escaped quotation marks are parsed correctly.
-test_that("Parses escaped quotation mark", {
-  
-  csv_text <- 'name,comment
-Anna,"He said ""Hello"""'
-  
-  writeLines(csv_text, "quotes.csv")
-  
-  result <- parse_csv("quotes.csv")
-  
-  expect_equal(result$dataframe$comment[1], 'He said "Hello"')
-})
-
-# Test that the parser also returns a valid JSON representation.
+# Test that the parser returns a valid JSON representation.
 test_that("JSON output is being created", {
   
   csv_text <- "name,email
-Anna,anna@example.com"
+Marcus,marcus.chen@example.com"
   
   writeLines(csv_text, "json.csv")
   
   result <- parse_csv("json.csv")
   
   expect_true(is.character(result$data_JSON))
-  expect_true(grepl("Anna", result$data_JSON))
+  expect_true(grepl("Marcus", result$data_JSON))
 })
 
+# Test that the JSON output contains all column names.
+test_that("JSON contains all column names", {
+  
+  csv_text <- "name,email
+Anna,anna@example.com"
+  
+  writeLines(csv_text, "json_columns.csv")
+  
+  result <- parse_csv("json_columns.csv")
+  
+  expect_true(grepl('"name"', result$data_JSON))
+  expect_true(grepl('"email"', result$data_JSON))
+})
