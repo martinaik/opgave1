@@ -8,8 +8,8 @@ Programmet kan desuden konvertere det parsede data frame til en JSON-repræsenta
 ### Byg programmet
 Programmet er udviklet i R. 
 Programmet består af tre funktioner:
-- `parse_csv()` læser en CSV-fil, parser indholdet og returnerer et data.frame og en JSON-repræsentation.
-- `parse_row()` parser en CSV-række ad gangen og håndterer blandt andet quoted felter og escaped citationstegn efter RFC 4180.
+- `parse_csv()` læser en CSV-fil, parser indholdet og returnerer et `data.frame` og en JSON-repræsentation.
+- `parse_row()` parser en CSV-række ad gangen og håndterer blandt andet quoted felter og escaped citationstegn.
 - `data_to_json()` konverterer data framet til JSON-repræsentation.
 
 ### Test programmet
