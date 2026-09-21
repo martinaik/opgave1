@@ -1,7 +1,7 @@
 # Opgave 1 - Parser opgave
 
 # Function to parse CSV file into data frame and JSON format
-parse_csv <- function(csv_file){
+parse_csv <- function(csv_file, has_header = TRUE){
   
   # Read the file as one text string
   csv_text <- paste(readLines(csv_file), collapse = "\n") 
@@ -9,11 +9,15 @@ parse_csv <- function(csv_file){
   # Split the text into lines
   lines <- strsplit(csv_text, "\n")[[1]] 
   
-  # Extract the header row as column names
-  headers <- parse_row(lines[1]) 
-  
-  # Split each line into rows
-  rows <- lapply(lines[-1], parse_row) 
+  # Check whether the CSV file contains a header row
+  if (has_header) {
+    headers <- parse_row(lines[1]) # Extract the header row as column names
+    rows <- lapply(lines[-1], parse_row) # Split each line into rows
+  } else {
+    first_row <- parse_row(lines[1]) # Parse the first row to determine the number of columns
+    headers <- paste0("V", seq_along(first_row)) # Create default column names
+    rows <- lapply(lines, parse_row) # Split each line into rows
+  }
 
   # Check that every row has the same number of fields as the header
   expected_fields <- length(headers)
