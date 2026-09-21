@@ -46,7 +46,7 @@ parse_csv <- function(csv_file){
 # Function to parse one row
 parse_row <- function(line){
   
-  fields <- c() # All fields from the row
+  fields <- c() # All fields from the current row
   field <- ""   # Current field
   inside_quotes <- FALSE # Track whether the parser is inside quotation marks
   
@@ -77,6 +77,11 @@ parse_row <- function(line){
     }
     
     i <- i + 1
+  }
+  
+  # Check for an unclosed quoted field
+  if (inside_quotes) {
+    stop("Invalid CSV format: unclosed quoted field.")
   }
   
   # Add the last field
