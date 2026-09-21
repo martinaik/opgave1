@@ -22,7 +22,7 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - fil med kun en kolonne,
 - filer med for mange eller for få felter,
 - tomme felter,
-- mellemrum i felter
+- mellemrum i felter,
 - komma i qouted felter,
 - komma og citationstegn i samme felt,
 - escaped citationstegn,
