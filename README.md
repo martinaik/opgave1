@@ -26,6 +26,7 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - komma i qouted felter,
 - komma og citationstegn i samme felt,
 - escaped citationstegn,
+- uafsluttet quoted felt,
 - tomt qouted felt,
 - danske tegn,
 - specialtegn,
@@ -33,7 +34,7 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - tom sidste linje,
 - tom linje midt i filen,
 - tom fil,
-- JSON-output.
+- JSON-repræsentation.
 
 ### Kør programmet
 Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på en CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Programmet parser derefter filen til et data frame og omdanner dette data frame til JSON-repræsentation. Programmet returnerer til sidst en liste, som indeholder både data framet og JSON-outputtet.
