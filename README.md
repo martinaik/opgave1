@@ -38,7 +38,7 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - JSON-repræsentation.
 
 ### Kør programmet
-Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på en CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Programmet parser derefter filen til et data frame og omdanner dette data frame til JSON-repræsentation. Programmet returnerer til sidst en liste, som indeholder både data framet og JSON-outputtet.
+Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på en CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Derefter beder programmet brugeren om at angive, om filen indeholder en header ved at indtaste `TRUE` eller `FALSE`. Programmet parser herefter filen til et data frame og omdanner dette data frame til JSON-repræsentation. Programmet returnerer til sidst en liste, som indeholder både data framet og JSON-outputtet og resultaterne printes. 
 
 ## Beskrivelse af den implementerede softwarearkitektur
 Programmet er opdelt i tre funktioner. 
