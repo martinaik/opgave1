@@ -21,13 +21,9 @@ parse_csv <- function(csv_file, has_header = TRUE){
 
   # Check that every row has the same number of fields as the header
   expected_fields <- length(headers)
-  for (i in seq_along(rows)){
-    if (length(rows[[i]]) != expected_fields){
-      stop(paste(
-        "Invalid CSV format: row", i + 1,
-        "contains", length(rows[[i]]),
-        "fields, expected", expected_fields
-      ))
+  for (i in seq_along(rows)) {
+    if (length(rows[[i]]) != expected_fields) {
+      stop(paste("Row", i + 1, "has the wrong number of fields."))
     }
   }
   
