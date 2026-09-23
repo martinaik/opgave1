@@ -63,7 +63,7 @@ parse_row <- function(line){
     char <- chars[i]
     
     if (char == '"'){
-      # Handle escaped quotation marks ("")
+      # Handle escaped quotation marks
       if (inside_quotes && i < length(chars) && chars[i + 1] == '"'){
         field <- paste0(field, '"')
         i <- i + 1
