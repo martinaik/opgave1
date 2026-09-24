@@ -31,13 +31,13 @@ if (toupper(hierarchical) == "YES") {
 # Parse the CSV file
 result <- parse_csv(csv_file, header_input, group1, group2)
 
-# Print the data frame and the normal JSON output
+# Print the data frame
 print(result$dataframe)
 
 # Save the normal JSON output
 writeLines(result$data_JSON, "json_data.json")
 
-# Create, print and save hierarchical JSON if requested
+# Create and save hierarchical JSON if requested
 if (!is.null(group1)) {
   writeLines(result$hierarchical_JSON, "hierarchical_json_data.json")
 }
