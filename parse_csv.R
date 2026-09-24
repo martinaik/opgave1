@@ -1,7 +1,7 @@
 # Opgave 1 - Parser opgave
 
 # Function to parse CSV file into data frame and JSON format
-parse_csv <- function(csv_file, has_header = TRUE){
+parse_csv <- function(csv_file, has_header = TRUE, group1 = NULL, group2 = NULL){
   
   # Read the file as one text string
   csv_text <- paste(readLines(csv_file), collapse = "\n") 
@@ -39,8 +39,18 @@ parse_csv <- function(csv_file, has_header = TRUE){
   # Convert to JSON format
   data_JSON <- data_to_json(dataframe)
   
+  # Convert to hierarchical JSON format (optional)
+  hierarchical_JSON <- NULL
+  if (!is.null(group1)){
+    hierarchical_JSON <- hierarchical_json(dataframe, group1, group2)
+  }
+  
   # Return results
-  list(dataframe = dataframe, data_JSON = data_JSON)
+  list(
+    dataframe = dataframe,
+    data_JSON = data_JSON,
+    hierarchical_JSON = hierarchical_JSON
+  )
 }
 
 # Function to parse one row
@@ -125,5 +135,83 @@ data_to_json <- function(data){
   )
   
   # Return the JSON text
+  json_text
+}
+
+# Function to create hierarchical JSON structure
+hierarchical_json <- function(data, group1, group2) {
+  
+  # Group the data by the first selected column
+  groups1 <- split(data, data[[group1]])
+  json_groups1 <- c()
+  
+  # Loop through the first grouping level
+  for (group1_name in names(groups1)) {
+    
+    data_group1 <- groups1[[group1_name]]
+    
+    if (is.null(group2)) { # One grouping level
+      # Remove the grouping column from the data
+      data_rows <- data_group1[names(data_group1) != group1]
+      
+      # Convert the remaining data to JSON
+      rows_json <- data_to_json(data_rows)
+      
+      # Create one JSON object for the group
+      group_json <- paste0(
+        '  "', group1_name, '": ',
+        rows_json
+      )
+    } else { # Two grouping levels
+      # Group the data by the second selected column
+      groups2 <- split(data_group1, data_group1[[group2]])
+      json_groups2 <- c()
+      
+      # Loop through the second grouping level
+      for (group2_name in names(groups2)) {
+        
+        data_group2 <- groups2[[group2_name]]
+        
+        # Remove the grouping columns from the data
+        data_rows <- data_group2[
+          , !(names(data_group2) %in% c(group1, group2)),
+          drop = FALSE
+        ]
+        
+        # Convert the remaining data to JSON
+        rows_json <- data_to_json(data_rows)
+        
+        # Create one JSON object for the second grouping level
+        group2_json <- paste0(
+          '      "', group2_name, '": ',
+          rows_json
+        )
+        
+        json_groups2 <- c(json_groups2, group2_json)
+      }
+      
+      # Create one JSON object for the first grouping level
+      group_json <- paste0(
+        "  {\n",
+        '    "', group1, '": "', group1_name, '",\n',
+        '    "', group2, 's": {\n',
+        paste(json_groups2, collapse = ",\n"),
+        "\n    }\n",
+        "  }"
+      )
+    }
+    
+    json_groups1 <- c(json_groups1, group_json)
+  }
+  
+  # Combine all groups into one hierarchical JSON object
+  json_text <- paste0(
+    "{\n",
+    '  "', group1, 's": {\n',
+    paste(json_groups1, collapse = ",\n"),
+    "\n  }\n",
+    "}"
+  )
+  
   json_text
 }
