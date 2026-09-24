@@ -12,7 +12,7 @@ Programmet er udviklet i R og består af tre filer:
 - `test_parse_csv.R` indeholder enhedstest for parseren og dens funktioner.
 
 Programmet består af fire funktioner:
-- `parse_csv()` læser en CSV-fil, parser indholdet og returnerer et `data.frame` og en JSON-repræsentation.
+- `parse_csv()` læser en CSV-fil, parser indholdet og returnerer et `data.frame`, almindelig JSON-repræsentation og eventuelt hierarkisk JSON.
 - `parse_row()` parser en CSV-række ad gangen og håndterer blandt andet quoted felter og escaped citationstegn.
 - `data_to_json()` konverterer data framet til JSON-repræsentation.
 - `hierarchical_json()` konverterer data framet til en hierarkisk JSON-struktur ved at gruppere data efter en eller to valgte kolonner.
@@ -43,17 +43,17 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - JSON-repræsentation.
 
 ### Kør programmet
-Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på den CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Derefter beder programmet brugeren om at angive, om filen indeholder en header ved at indtaste `TRUE` eller `FALSE`. Programmet parser herefter filen til et `data.frame` og omdanner dette `data.frame` til JSON-repræsentation. Programmet returnerer en liste, som indeholder både data framet og JSON-outputtet og resultaterne udskrives. Brugeren kan desuden vælge at oprette en hierarkisk JSON-struktur ved at angive en eller to koloner, som dataene skal grupperes efter. For eksempel kan `employees.ascii.csv` grupperes efter `office` og `department`, så medarbejderne organiseres efter kontor og derefter afdeling. Programmet opretter samtidig JSON-filer med outputtet, så resultaterne gemmes som både almindelig JSON og eventuelt hierarkisk JSON.
+Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på den CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Derefter beder programmet brugeren om at angive, om CSV-filen indeholder en header ved at indtaste `TRUE` eller `FALSE`. Programmet spørger herefter, om der skal oprettes en hierarkisk JSON-struktur ved at indtaste ´YES` eller `NO`. Hvis brugeren vælger `YES`, bliver brugeren bedt om at angive en eller to kolonner, som dataene skal grupperes efter. For eksempel kan `employees.ascii.csv` grupperes efter `office` og `department`, så medarbejderne organiseres efter kontor og derefter afdeling. Programmet parser herefter CSV-filen til et `data.frame` og konverterer dette `data.frame` til en almindelig JSON-repræsentation og eventuelt hierarkisk JSON. Programmet returnerer en liste, som indeholder `data.frame`, JSON-output og eventuelt hierarkisk JSON-output. Programmet udskriver `data.frame` og den almindelige JSON og eventuelle hierarkisk JSON-struktur gemmes i JSON-filer.
 
 ## Beskrivelse af den implementerede softwarearkitektur
 Programmet er opdelt i fire funktioner:
-`parse_csv()` styrer hele parserprocessen. Funktionen læser CSV-filen som tekst, opdeler teksten i linjer, parser kolonnenavne og datarækker, kontrollerer at alle rækker har det korrekte antal felter, opretter et `data.frame` og konverterer resultatet til JSON-repræsentation. Funktionen har også argumentet `has_header`, hvor brugeren kan angive `TRUE` eller `FALSE` afhængigt af, om CSV-filen indeholder en header. Som standard antager funktionen, at CSV-filen indeholder en header. Hvis `has_header = TRUE`, bruges den første række som kolonnenavne. Hvis `has_header = FALSE`, oprettes der kolonnenavne (V1, V2, ...), og alle rækker behandles som data.
+`parse_csv()` styrer hele parserprocessen. Funktionen læser CSV-filen som tekst, opdeler teksten i linjer, parser kolonnenavne og datarækker, kontrollerer at alle rækker har det korrekte antal felter, opretter et `data.frame` og konverterer resultatet til JSON-repræsentation. Funktionen har også argumenterne `has_header`, `group1 = NULL` og `group2 = NULL`. `has_header` angiver, om CSV-filen indeholder en header, mens `group1` og `group2` er valgfrie argumenter, der bruges til at oprette en hierarkisk JSON-struktur. Som standard antager funktionen, at CSV-filen indeholder en header (`has_header = TRUE`). Hvis `has_header = TRUE`, bruges den første række som kolonnenavne. Hvis `has_header = FALSE`, oprettes der kolonnenavne (V1, V2, V3, ...), og alle rækker behandles som data.
 
 `parse_row()` parser en CSV-række ad gangen. Funktionen gennemgår rækken tegn for tegn og håndterer kommaer uden for citationstegn, qouted felter og escaped citationstegn.
 
 `data_to_json()` konverterer det færdige `data.frame` til JSON-repræsentation. Funktionen gennemgår hver række og kolonne i `data.frame` og opbygger JSON-strengen ved at samle felterne til JSON-objekter og derefter samle alle objekterne i et JSON-array.
 
-`hierarchical_json()` konverterer `data.frame` til hierakisk JSON-struktur. Funktionen har argumenterne `group1` og `group2 = NULL`, hvor `group1` angiver den første kolonne, der skal grupperes efter, og `group2` er en valgfri anden kolonne til et ekstra hierarkisk niveau. 
+`hierarchical_json()` konverterer `data.frame` til hierarkisk JSON-struktur ved at gruppere data efter de kolonner, der er angivet i `group1` og eventuelt `group2`.
 
 Programmet fungerer i følgende trin:
 1. CSV-filen læses ind som en tekststreng.
@@ -63,10 +63,10 @@ Programmet fungerer i følgende trin:
 5. Programmet kontrollerer, at alle rækker indeholder det samme antal felter som headeren.
 6. Data framet sendes til funktionen `data_to_json()`.
 7. Hver række og kolonne gennemgås, og der opbygges en JSON-streng.
-8. Programmet udskriver `data.frame` og JSON-repræsentationen og gemmer JSON-outputtet i en json-fil.
+8. Programmet udskriver `data.frame` og gemmer JSON-outputtet som en JSON-fil.
 9. Brugeren kan vælge at oprette en hierakisk JSON-struktur ved at angive en eller to kolonner, som dataene skal grupperes efter.
 10. Data framet sendes til funktionen `hierarchical_json()`, som grupperer data efter de valgte kolonner og opbygger en hierarkisk JSON-struktur.
-11. Det hierarkiske JSON-output udskrives og gemmes samtidig som en json-fil.
+11. Hvis brugeren har valgt at oprette en hierarkisk JSON-struktur, gemmes outputtet i en JSON-fil.
 
 ## UML-diagram
 ```
@@ -117,8 +117,7 @@ Programmet fungerer i følgende trin:
               v
 +---------------------------+
 |   Udskriv data.frame og   |
-|   JSON-output og gem      |
-|   JSON-fil                |
+|   gem JSON-fil            |
 +---------------------------+
               |
               v
@@ -141,8 +140,8 @@ Programmet fungerer i følgende trin:
       |               | 
       |               v
       |     +-----------------------+
-      |     |  Udskriv og gem       |
-      |     |  hierarkisk JSON-fil  |
+      |     |     Gem hierarkisk    |
+      |     |     JSON-fil          |
       |     +-----------------------+
       |               |
       +---------------+
