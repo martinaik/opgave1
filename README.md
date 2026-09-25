@@ -40,7 +40,8 @@ Programmet testes med enhedstest ved hjælp af pakken `testthat`. Testene dække
 - tom linje midt i filen,
 - tom fil,
 - filer med og uden header,
-- JSON-repræsentation.
+- JSON-repræsentation,
+- hierarkisk JSON-struktur. 
 
 ### Kør programmet
 Programmet køres ved at køre scriptet `run_parse_csv.R`, som indlæser parseren og beder brugeren om navnet på den CSV-fil, der skal parses. Brugeren indtaster navnet på den ønskede CSV-fil, for eksempel `employees.ascii.csv` eller `sogne.dawa.csv`. Derefter beder programmet brugeren om at angive, om CSV-filen indeholder en header ved at indtaste `TRUE` eller `FALSE`. Programmet spørger herefter, om der skal oprettes en hierarkisk JSON-struktur ved at indtaste ´YES` eller `NO`. Hvis brugeren vælger `YES`, bliver brugeren bedt om at angive en eller to kolonner, som dataene skal grupperes efter. For eksempel kan `employees.ascii.csv` grupperes efter `office` og `department`, så medarbejderne organiseres efter kontor og derefter afdeling. Programmet parser herefter CSV-filen til et `data.frame` og konverterer dette `data.frame` til en almindelig JSON-repræsentation og eventuelt hierarkisk JSON. Programmet returnerer en liste, som indeholder `data.frame`, JSON-output og eventuelt hierarkisk JSON-output. Programmet udskriver `data.frame` og den almindelige JSON og eventuelle hierarkisk JSON-struktur gemmes i JSON-filer.
