@@ -139,7 +139,7 @@ data_to_json <- function(data){
 }
 
 # Function to create hierarchical JSON structure
-hierarchical_json <- function(data, group1, group2) {
+hierarchical_json <- function(data, group1, group2 = NULL) {
   
   # Group the data by the first selected column
   groups1 <- split(data, data[[group1]])
@@ -213,5 +213,6 @@ hierarchical_json <- function(data, group1, group2) {
     "}"
   )
   
+  # Return the hierarchical JSON text
   json_text
 }
