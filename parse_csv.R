@@ -194,7 +194,7 @@ hierarchical_json <- function(data, group1, group2 = NULL) {
       group_json <- paste0(
         "  {\n",
         '    "', group1, '": "', group1_name, '",\n',
-        '    "', group2, 's": {\n',
+        '    "', group2, '": {\n',
         paste(json_groups2, collapse = ",\n"),
         "\n    }\n",
         "  }"
@@ -207,12 +207,12 @@ hierarchical_json <- function(data, group1, group2 = NULL) {
   # Combine all groups into one hierarchical JSON object
   json_text <- paste0(
     "{\n",
-    '  "', group1, 's": {\n',
+    '  "', group1, '": {\n',
     paste(json_groups1, collapse = ",\n"),
     "\n  }\n",
     "}"
   )
   
-  # Return the hierarchical JSON text
+  # Return the hierarchical JSON structure
   json_text
 }
