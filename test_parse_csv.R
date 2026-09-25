@@ -356,3 +356,93 @@ Priya,priya.sharma@example.com"
   expect_true(grepl("Marcus", result$data_JSON))
   expect_true(grepl("Priya", result$data_JSON))
 })
+
+# Test that hierarchical JSON is created with one grouping level.
+test_that("Creates hierarchical JSON with one grouping level", {
+  
+  csv_text <- "name,office
+Anna,London
+Peter,London
+Marie,Austin"
+  
+  writeLines(csv_text, "office.csv")
+  
+  result <- parse_csv("office.csv")
+  
+  json <- hierarchical_json(result$dataframe, "office")
+  
+  expect_true(grepl('"offices"', json))
+  expect_true(grepl('"London"', json))
+  expect_true(grepl('"Austin"', json))
+})
+
+# Test that hierarchical JSON is created with two grouping levels.
+test_that("Creates hierarchical JSON with two grouping levels", {
+  
+  csv_text <- "name,office,department
+Anna,London,Engineering
+Peter,London,HR
+Marie,Austin,Engineering"
+  
+  writeLines(csv_text, "office_department.csv")
+  
+  result <- parse_csv("office_department.csv")
+  
+  json <- hierarchical_json(result$dataframe, "office", "department")
+  
+  expect_true(grepl('"offices"', json))
+  expect_true(grepl('"departments"', json))
+  expect_true(grepl('"Engineering"', json))
+  expect_true(grepl('"HR"', json))
+})
+
+# Test that employees are grouped under the correct office.
+test_that("Groups employees under the correct office", {
+  
+  csv_text <- "name,office
+Anna,London
+Peter,Austin"
+  
+  writeLines(csv_text, "employees.csv")
+  
+  result <- parse_csv("employees.csv")
+  
+  json <- hierarchical_json(result$dataframe, "office")
+  
+  expect_true(grepl('"London"', json))
+  expect_true(grepl('"Anna"', json))
+  expect_true(grepl('"Austin"', json))
+  expect_true(grepl('"Peter"', json))
+})
+
+# Test that employees are grouped under the correct department.
+test_that("Groups employees under the correct department", {
+  
+  csv_text <- "name,office,department
+Anna,London,Engineering
+Peter,London,HR"
+  
+  writeLines(csv_text, "departments.csv")
+  
+  result <- parse_csv("departments.csv")
+  
+  json <- hierarchical_json(result$dataframe, "office", "department")
+  
+  expect_true(grepl('"Engineering"', json))
+  expect_true(grepl('"HR"', json))
+  expect_true(grepl('"Anna"', json))
+  expect_true(grepl('"Peter"', json))
+})
+
+# Test that an invalid grouping column returns an error.
+test_that("Returns an error for an invalid grouping column", {
+  
+  csv_text <- "name,office
+Anna,London"
+  
+  writeLines(csv_text, "invalid_group.csv")
+  
+  result <- parse_csv("invalid_group.csv")
+  
+  expect_error(hierarchical_json(result$dataframe, "city"))
+})
