@@ -371,7 +371,7 @@ Marie,Austin"
   
   json <- hierarchical_json(result$dataframe, "office")
   
-  expect_true(grepl('"offices"', json))
+  expect_true(grepl('"office"', json))
   expect_true(grepl('"London"', json))
   expect_true(grepl('"Austin"', json))
 })
@@ -390,8 +390,8 @@ Marie,Austin,Engineering"
   
   json <- hierarchical_json(result$dataframe, "office", "department")
   
-  expect_true(grepl('"offices"', json))
-  expect_true(grepl('"departments"', json))
+  expect_true(grepl('"office"', json))
+  expect_true(grepl('"department"', json))
   expect_true(grepl('"Engineering"', json))
   expect_true(grepl('"HR"', json))
 })
